@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: teal;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        #container {
+            display: flex;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+            background-color: teal;
+            color: white;
+            width: 75%;
+            margin: auto;
+            margin-top: 50px;
+
+        }
+
+        #div_input,
+        #div_output {
+            display: flex;
+            flex-direction: column;
+            align-items:center;
+            flex: 1;
+            width: 70%;
+            height: 300px;
+            padding-top: 2%;
+        }
+
+        #div_input{
+            background-color: white;
+        }
+
+        #div_output{
+            background-color: #f9f9f9;
+        }
+
+
+        .border {
+            /* border: 1px solid red; */
+        }
+
+    #div_input_select,#div_output_select{
+        width: 70%;
+        height: 12%;
+    }
+    #input_select,#output_select{
+        width: 100%;
+        height: 100%;  
+        border-radius: 25px;
+        padding-left: 3%;
+        color: blue;
+        border: .5px solid blue;
+    }
+    #div_input_text,#div_output_value{
+        width: 100%;
+        margin-top: 1%;
+        /* height: 75%; */
+    }
+
+    #inputtext,#output_p {
+            width: 86%;
+            height: 100%;
+            /* border: 1px solid white; */
+            /* background-color: teal; */
+            color: white;
+            margin-top: 0px;
+            padding-left: 10%;
+            padding-top: 20%;
+            color: black;
+            border: none;
+        }
+        #div_bottom{
+            /* width: 100%; */
+            /* margin: auto; */
+            text-align: center;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container" class="border">
+        <div id="div_input" class="border">
+            <div id="div_input_select" class="border">
+                <select name="" id="input_select">
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="fr">French</option>
+                </select>
+            </div>
+            <div id="div_input_text" class="border">
+                <textarea name="" id="inputtext" oninput="textenter_delay()" placeholder="Enter Text"></textarea>
+            </div>
+        </div>
+        <div id="div_output" class="border">
+            <div id="div_output_select" class="border">
+                <select name="" id="output_select">
+                    <option value="hi">Hindi</option>
+                    <option value="en">English</option>
+                    <option value="fr">French</option>
+                </select>
+            </div>
+            <div id="div_output_value" class="border">
+                <p id="output_p">Translation</p>
+            </div>
+        </div>
+    </div>
+    <div id="div_bottom"><h1>Language Translator</h1></div>
+</body>
+
+</html>
+<script>
+    let read = (id) => {
+        return document.getElementById(id).value
+    }
+    let id;
+
+    let textenter_delay = () => {
+        if (id) {
+            clearTimeout(id)
+        }
+        id = setTimeout(function () {
+            fetchfun()
+        }, 1500)
+
+    }
+
+    async function fetchfun() {
+
+        let input_text = read("inputtext")
+        let input_select = read("input_select")
+        let output_select = read("output_select")
+        console.log(input_text, input_select, output_select)
+
+        try {
+            let res = await fetch("https://libretranslate.de/translate", {
+                method: 'POST',
+
+                body: JSON.stringify({
+                    q: input_text,
+                    source: input_select,
+                    target: output_select,
+                    format: 'text',
+                }),
+
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+            let data = await res.json();
+            let { translatedText } = data
+            var outputp = document.getElementById("output_p")
+            // console.log(outputp)
+            outputp.innerText = translatedText;
+            let textarea=document.getElementById("inputtext")
+            textarea.value=null;
+
+            // console.log(textarea)a
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+
+</script>
